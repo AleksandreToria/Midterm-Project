@@ -1,0 +1,9 @@
+package com.example.store.domain.repository.store
+
+import com.example.store.data.common.Resource
+import com.example.store.domain.model.store.GetProducts
+import kotlinx.coroutines.flow.Flow
+
+interface ProductRepository {
+    suspend fun getProducts(): Flow<Resource<List<GetProducts>>>
+}
