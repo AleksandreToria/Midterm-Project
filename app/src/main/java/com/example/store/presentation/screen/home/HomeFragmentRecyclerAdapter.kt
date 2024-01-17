@@ -1,30 +1,39 @@
 package com.example.store.presentation.screen.home
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.store.databinding.ItemLayoutBinding
+import com.example.store.domain.model.store.GetProducts
 import com.example.store.presentation.extension.loadImage
 import com.example.store.presentation.model.product.Product
 
 class HomeFragmentRecyclerAdapter :
     ListAdapter<Product, HomeFragmentRecyclerAdapter.ProductsViewHolder>(ProductsDiffUtil()) {
 
+    private var onItemClick: ((GetProducts) -> Unit)? = null
+
+    fun setOnItemClickListener(listener: (GetProducts) -> Unit) {
+        this.onItemClick = listener
+    }
+
     inner class ProductsViewHolder(private val binding: ItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
         private lateinit var model: Product
 
+        @SuppressLint("SetTextI18n")
         fun bind() {
             model = currentList[adapterPosition]
             with(binding) {
                 image.loadImage(model.image)
                 title.text = model.title
                 description.text = model.description
-                price.text = model.price.toString()
-                rating.text = model.rating.rate.toString()
-                count.text = model.rating.count.toString()
+                price.text = "$${model.price}"
+                rating.text = "Rating: ${model.rating.rate}"
+                count.text = "Count: ${model.rating.count}"
             }
         }
     }

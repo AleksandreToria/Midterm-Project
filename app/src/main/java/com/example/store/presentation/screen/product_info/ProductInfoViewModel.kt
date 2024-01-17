@@ -1,16 +1,14 @@
-package com.example.store.presentation.screen.home
+package com.example.store.presentation.screen.product_info
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.store.data.common.Resource
-import com.example.store.domain.usecase.product.GetProductUseCase
+import com.example.store.domain.usecase.product.GetProductInfoUseCase
 import com.example.store.presentation.event.product.ProductEvent
 import com.example.store.presentation.mapper.product.toPresenter
 import com.example.store.presentation.state.product.ProductState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -18,32 +16,29 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeFragmentViewModel @Inject constructor(
-    private val getProductUseCase: GetProductUseCase
+class ProductInfoViewModel @Inject constructor(
+    private val getProductInfoUseCase: GetProductInfoUseCase
 ) : ViewModel() {
-    private val _productState = MutableStateFlow(ProductState())
-    val productState: StateFlow<ProductState> = _productState.asStateFlow()
-
-    private val _uiEvent = MutableSharedFlow<HomeFragmentUiEvent>()
-    val uiEvent: SharedFlow<HomeFragmentUiEvent> get() = _uiEvent
+    private val _productInfoState = MutableStateFlow(ProductState())
+    val productInfoState: StateFlow<ProductState> = _productInfoState.asStateFlow()
 
     fun onEvent(event: ProductEvent) {
         when (event) {
-            ProductEvent.FetchProducts -> fetchProducts()
-            ProductEvent.ResetErrorMessage -> updateErrorMessage(null)
+            is ProductEvent.FetchProductInfo -> fetchProducts(event.id)
+            is ProductEvent.ResetErrorMessage -> updateErrorMessage(null)
             else -> {}
         }
     }
 
-    private fun fetchProducts() {
+    private fun fetchProducts(id: Int) {
         viewModelScope.launch {
-            getProductUseCase().collect { it ->
+            getProductInfoUseCase(id).collect {
                 when (it) {
                     is Resource.Success -> {
-                        _productState.update { currentState ->
+                        _productInfoState.update { currentState ->
                             currentState.copy(
                                 isLoading = false,
-                                products = it.data.map { it.toPresenter() }
+                                productInfo = it.data.toPresenter()
                             )
                         }
                     }
@@ -51,7 +46,7 @@ class HomeFragmentViewModel @Inject constructor(
                     is Resource.Error -> updateErrorMessage(it.errorMessage)
 
                     is Resource.Loading -> {
-                        _productState.update { currentState ->
+                        _productInfoState.update { currentState ->
                             currentState.copy(
                                 isLoading = it.loading
                             )
@@ -63,10 +58,6 @@ class HomeFragmentViewModel @Inject constructor(
     }
 
     private fun updateErrorMessage(message: String?) {
-        _productState.update { currentState -> currentState.copy(errorMessage = message) }
-    }
-
-    sealed interface HomeFragmentUiEvent {
-        data class NavigateToProductInfo(val id: Int) : HomeFragmentUiEvent
+        _productInfoState.update { currentState -> currentState.copy(errorMessage = message) }
     }
 }

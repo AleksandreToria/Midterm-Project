@@ -15,4 +15,6 @@
     <string name="already_have_an_account">Already have an account?</string>
     <string name="create_an_account_to_explore_the_market">Create an account to explore the market!</string>
     <string name="search_any_product">Search any product..</string>
+    <string name="buy_now">Buy Now</string>
+    <string name="add_to_cart">Add to Cart</string>
 </resources>

@@ -1,7 +1,7 @@
 package com.example.store.di
 
 import com.example.store.data.repository.auth.AuthRepositoryImpl
-import com.example.store.data.repository.store.StoreRepositoryImpl
+import com.example.store.data.repository.store.ProductRepositoryImpl
 import com.example.store.domain.repository.auth.AuthRepository
 import com.example.store.domain.repository.store.ProductRepository
 import dagger.Module
@@ -21,7 +21,7 @@ object RepositoryModule {
 
     @Singleton
     @Provides
-    fun provideProductRepository(storeRepositoryImpl: StoreRepositoryImpl): ProductRepository {
-        return storeRepositoryImpl
+    fun provideProductRepository(productRepositoryImpl: ProductRepositoryImpl): ProductRepository {
+        return productRepositoryImpl
     }
 }
