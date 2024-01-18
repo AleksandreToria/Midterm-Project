@@ -4,4 +4,5 @@ sealed class ProductEvent {
     data object FetchProducts : ProductEvent()
     data class FetchProductInfo(val id: Int) : ProductEvent()
     data object ResetErrorMessage : ProductEvent()
+    data class ItemClick(val id: Int): ProductEvent()
 }

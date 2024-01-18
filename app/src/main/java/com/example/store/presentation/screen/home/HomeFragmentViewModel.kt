@@ -29,16 +29,23 @@ class HomeFragmentViewModel @Inject constructor(
 
     fun onEvent(event: ProductEvent) {
         when (event) {
-            ProductEvent.FetchProducts -> fetchProducts()
-            ProductEvent.ResetErrorMessage -> updateErrorMessage(null)
+            is ProductEvent.FetchProducts -> fetchProducts()
+            is ProductEvent.ResetErrorMessage -> updateErrorMessage(null)
+            is ProductEvent.ItemClick -> onClick(HomeFragmentUiEvent.NavigateToProductInfo(event.id))
             else -> {}
+        }
+    }
+
+    private fun onClick(homeFragmentUiEvent: HomeFragmentUiEvent) {
+        viewModelScope.launch {
+            _uiEvent.emit(homeFragmentUiEvent)
         }
     }
 
     private fun fetchProducts() {
         viewModelScope.launch {
             getProductUseCase().collect {
-                when(it) {
+                when (it) {
                     is Resource.Success -> {
                         _productState.update { currentState ->
                             currentState.copy(

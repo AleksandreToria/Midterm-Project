@@ -1,6 +1,7 @@
 package com.example.store.presentation.screen.home
 
 import android.annotation.SuppressLint
+import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -14,26 +15,28 @@ import com.example.store.presentation.model.product.Product
 class HomeFragmentRecyclerAdapter :
     ListAdapter<Product, HomeFragmentRecyclerAdapter.ProductsViewHolder>(ProductsDiffUtil()) {
 
-    private var onItemClick: ((GetProducts) -> Unit)? = null
+    private var onItemClick: ((Product) -> Unit)? = null
 
-    fun setOnItemClickListener(listener: (GetProducts) -> Unit) {
+    fun setOnItemClickListener(listener: (Product) -> Unit) {
         this.onItemClick = listener
     }
 
     inner class ProductsViewHolder(private val binding: ItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        private lateinit var model: Product
 
         @SuppressLint("SetTextI18n")
-        fun bind() {
-            model = currentList[adapterPosition]
+        fun bind(product: Product) {
             with(binding) {
-                image.loadImage(model.image)
-                title.text = model.title
-                description.text = model.description
-                price.text = "$${model.price}"
-                rating.text = "Rating: ${model.rating.rate}"
-                count.text = "Count: ${model.rating.count}"
+                image.loadImage(product.image)
+                title.text = product.title
+                description.text = product.description
+                price.text = "$${product.price}"
+                rating.text = "Rating: ${product.rating.rate}"
+                count.text = "Count: ${product.rating.count}"
+
+                root.setOnClickListener {
+                    onItemClick?.invoke(product)
+                }
             }
         }
     }
@@ -47,7 +50,7 @@ class HomeFragmentRecyclerAdapter :
     )
 
     override fun onBindViewHolder(holder: ProductsViewHolder, position: Int) {
-        holder.bind()
+        holder.bind(getItem(position))
     }
 
     class ProductsDiffUtil : DiffUtil.ItemCallback<Product>() {

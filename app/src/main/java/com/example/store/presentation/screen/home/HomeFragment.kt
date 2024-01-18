@@ -22,22 +22,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private var adapter = HomeFragmentRecyclerAdapter()
 
     override fun bind() {
-        with(binding.recyclerView) {
-            layoutManager = GridLayoutManager(requireContext(), 2)
-            adapter = adapter
+        binding.apply {
+            recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
+            recyclerView.adapter = adapter
         }
+
         viewModel.onEvent(ProductEvent.FetchProducts)
     }
 
     override fun bindViewActionListeners() {
         adapter.setOnItemClickListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                repeatOnLifecycle(Lifecycle.State.STARTED) {
-                    viewModel.uiEvent.collect {
-                        handleNavigationEvents(event = it)
-                    }
-                }
-            }
+            viewModel.onEvent(ProductEvent.ItemClick(it.id))
         }
     }
 
@@ -46,6 +41,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.productState.collect {
                     handleProductState(it)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEvent.collect {
+                    handleNavigationEvents(event = it)
                 }
             }
         }
@@ -70,7 +73,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             is HomeFragmentViewModel.HomeFragmentUiEvent.NavigateToProductInfo -> {
                 findNavController().navigate(
                     HomeFragmentDirections.actionHomeFragmentToProductInfoFragment(
-                        id = id
+                        id = event.id
                     )
                 )
             }

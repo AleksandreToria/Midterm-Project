@@ -1,5 +1,6 @@
 package com.example.store.presentation.screen.product_info
 
+import android.annotation.SuppressLint
 import android.view.View
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -31,6 +32,7 @@ class ProductInfoFragment :
 
     }
 
+    @SuppressLint("SetTextI18n")
     override fun bindObserves() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -41,9 +43,9 @@ class ProductInfoFragment :
                         image.loadImage(it.productInfo?.image)
                         category.text = it.productInfo?.category
                         title.text = it.productInfo?.title
-                        price.text = it.productInfo?.price.toString()
-                        rating.text = it.productInfo?.rating?.rate.toString()
-                        count.text = it.productInfo?.rating?.count.toString()
+                        price.text = "$${it.productInfo?.price}"
+                        rating.text = "Rating: ${it.productInfo?.rating?.rate}"
+                        count.text = "Items left: ${it.productInfo?.rating?.count}"
                         description.text = it.productInfo?.description
                     }
                 }
