@@ -19,10 +19,9 @@ import kotlinx.coroutines.launch
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
     private val viewModel: HomeFragmentViewModel by viewModels()
-    private lateinit var adapter: HomeFragmentRecyclerAdapter
+    private var adapter = HomeFragmentRecyclerAdapter()
 
     override fun bind() {
-        adapter = HomeFragmentRecyclerAdapter()
         with(binding.recyclerView) {
             layoutManager = GridLayoutManager(requireContext(), 2)
             adapter = adapter
