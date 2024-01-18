@@ -1,7 +1,9 @@
 package com.example.store.presentation.mapper.product
 
 import com.example.store.domain.model.store.GetProducts
+import com.example.store.domain.model.store.Rating
 import com.example.store.presentation.model.product.Product
+import com.example.store.presentation.model.product.Rate
 
 fun GetProducts.toPresenter() =
     Product(
@@ -10,6 +12,12 @@ fun GetProducts.toPresenter() =
         id = id,
         image = image,
         price = price,
-        rating = rating,
+        rating = rating.ratingToPresent(),
         title = title
+    )
+
+fun Rating.ratingToPresent() =
+    Rate(
+        rate = rate,
+        count = count
     )

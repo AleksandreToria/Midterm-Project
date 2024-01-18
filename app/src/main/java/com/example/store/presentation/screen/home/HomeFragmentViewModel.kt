@@ -37,8 +37,8 @@ class HomeFragmentViewModel @Inject constructor(
 
     private fun fetchProducts() {
         viewModelScope.launch {
-            getProductUseCase().collect { it ->
-                when (it) {
+            getProductUseCase().collect {
+                when(it) {
                     is Resource.Success -> {
                         _productState.update { currentState ->
                             currentState.copy(
