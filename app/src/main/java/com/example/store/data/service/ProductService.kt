@@ -11,4 +11,7 @@ interface ProductService {
 
     @GET("products/{id}")
     suspend fun getUserInfo(@Path("id") id: Int): Response<GetProductsDto>
+
+    @GET("products/category/{category}")
+    suspend fun getCategoryProducts(@Path("category") category: String): Response<List<GetProductsDto>>
 }

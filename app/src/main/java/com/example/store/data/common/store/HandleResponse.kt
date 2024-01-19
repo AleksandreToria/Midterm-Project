@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.flow
 import retrofit2.Response
 import javax.inject.Inject
 
-class HandleStoreResponse @Inject constructor() {
+class HandleResponse @Inject constructor() {
     fun <T : Any> apiCall(call: suspend () -> Response<T>) = flow {
         emit(Resource.Loading(loading = true))
         try {

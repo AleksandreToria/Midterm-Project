@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.example.store.databinding.FragmentProductInfoBinding
 import com.example.store.presentation.base.BaseFragment
-import com.example.store.presentation.event.product.ProductEvent
+import com.example.store.presentation.event.product.StoreEvent
 import com.example.store.presentation.extension.loadImage
 import com.example.store.presentation.extension.showSnackBar
 import com.example.store.presentation.state.product.ProductState
@@ -24,7 +24,7 @@ class ProductInfoFragment :
     override fun bind() {
         arguments?.let {
             val safeArgs = ProductInfoFragmentArgs.fromBundle(it)
-            viewModel.onEvent(ProductEvent.FetchProductInfo(safeArgs.id))
+            viewModel.onEvent(StoreEvent.FetchStoreInfo(safeArgs.id))
         }
     }
 
@@ -63,7 +63,7 @@ class ProductInfoFragment :
 
         state.errorMessage?.let {
             binding.root.showSnackBar(it)
-            viewModel.onEvent(ProductEvent.ResetErrorMessage)
+            viewModel.onEvent(StoreEvent.ResetErrorMessage)
         }
     }
 }

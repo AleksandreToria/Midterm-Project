@@ -6,9 +6,9 @@ import com.example.store.domain.model.store.GetProducts
 import com.example.store.domain.model.store.Rating
 
 fun GetProductsDto.toDomain(): GetProducts {
-    return GetProducts(category, description, id, image, price, rating.ratingToDomain(), title)
+    return GetProducts(category, description, id, image, price, rating.toDomain(), title)
 }
 
-fun RatingDto.ratingToDomain(): Rating {
+fun RatingDto.toDomain(): Rating {
     return Rating(count, rate)
 }

@@ -1,5 +1,6 @@
 package com.example.store.di
 
+import com.example.store.data.service.CategoryService
 import com.example.store.data.service.ProductService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -36,7 +37,7 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideRetrofitUserInfo(okHttpClient: OkHttpClient): Retrofit {
+    fun provideRetrofitProduct(okHttpClient: OkHttpClient): Retrofit {
         return Retrofit.Builder()
             .baseUrl(BASE_URL_PRODUCTS)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
@@ -46,7 +47,13 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideUserListService(retrofit: Retrofit): ProductService {
+    fun provideProductService(retrofit: Retrofit): ProductService {
         return retrofit.create(ProductService::class.java)
+    }
+
+    @Singleton
+    @Provides
+    fun provideCategoryService(retrofit: Retrofit): CategoryService {
+        return retrofit.create(CategoryService::class.java)
     }
 }

@@ -1,14 +1,12 @@
 package com.example.store.presentation.screen.home
 
 import android.annotation.SuppressLint
-import android.util.Log.d
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.store.databinding.ItemLayoutBinding
-import com.example.store.domain.model.store.GetProducts
 import com.example.store.presentation.extension.loadImage
 import com.example.store.presentation.model.product.Product
 

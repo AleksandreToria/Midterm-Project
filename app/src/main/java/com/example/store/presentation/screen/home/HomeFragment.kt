@@ -7,9 +7,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.store.databinding.FragmentHomeBinding
 import com.example.store.presentation.base.BaseFragment
-import com.example.store.presentation.event.product.ProductEvent
+import com.example.store.presentation.event.product.StoreEvent
 import com.example.store.presentation.extension.showSnackBar
 import com.example.store.presentation.state.product.ProductState
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,20 +20,32 @@ import kotlinx.coroutines.launch
 class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate) {
 
     private val viewModel: HomeFragmentViewModel by viewModels()
-    private var adapter = HomeFragmentRecyclerAdapter()
+    private val productAdapter = HomeFragmentRecyclerAdapter()
+    private val categoryAdapter = CategoryRecyclerAdapter()
 
     override fun bind() {
         binding.apply {
             recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-            recyclerView.adapter = adapter
+            recyclerView.adapter = productAdapter
         }
 
-        viewModel.onEvent(ProductEvent.FetchProducts)
+        binding.apply {
+            categoryRecyclerView.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            categoryRecyclerView.adapter = categoryAdapter
+        }
+
+        viewModel.onEvent(StoreEvent.FetchProducts)
+        viewModel.onEvent(StoreEvent.FetchCategories)
     }
 
     override fun bindViewActionListeners() {
-        adapter.setOnItemClickListener {
-            viewModel.onEvent(ProductEvent.ItemClick(it.id))
+        productAdapter.setOnItemClickListener {
+            viewModel.onEvent(StoreEvent.ItemClick(it.id))
+        }
+
+        categoryAdapter.setOnItemClickListener {
+            viewModel.onEvent(StoreEvent.FetchProductsByCategory(it))
         }
     }
 
@@ -58,13 +71,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         binding.progressBar.visibility =
             if (state.isLoading) View.VISIBLE else View.GONE
 
+        state.categories?.let {
+            categoryAdapter.submitList(it)
+        }
+
         state.products?.let {
-            adapter.submitList(it)
+            productAdapter.submitList(it)
+        }
+
+        state.categoryProducts?.let {
+            productAdapter.submitList(it)
         }
 
         state.errorMessage?.let {
             binding.root.showSnackBar(it)
-            viewModel.onEvent(ProductEvent.ResetErrorMessage)
+            viewModel.onEvent(StoreEvent.ResetErrorMessage)
         }
     }
 

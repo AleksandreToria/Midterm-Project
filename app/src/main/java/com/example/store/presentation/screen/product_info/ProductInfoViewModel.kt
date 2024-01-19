@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.store.data.common.Resource
 import com.example.store.domain.usecase.product.GetProductInfoUseCase
-import com.example.store.presentation.event.product.ProductEvent
+import com.example.store.presentation.event.product.StoreEvent
 import com.example.store.presentation.mapper.product.toPresenter
 import com.example.store.presentation.state.product.ProductState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,10 +22,10 @@ class ProductInfoViewModel @Inject constructor(
     private val _productInfoState = MutableStateFlow(ProductState())
     val productInfoState: StateFlow<ProductState> = _productInfoState.asStateFlow()
 
-    fun onEvent(event: ProductEvent) {
+    fun onEvent(event: StoreEvent) {
         when (event) {
-            is ProductEvent.FetchProductInfo -> fetchProducts(event.id)
-            is ProductEvent.ResetErrorMessage -> updateErrorMessage(null)
+            is StoreEvent.FetchStoreInfo -> fetchProducts(event.id)
+            is StoreEvent.ResetErrorMessage -> updateErrorMessage(null)
             else -> {}
         }
     }
