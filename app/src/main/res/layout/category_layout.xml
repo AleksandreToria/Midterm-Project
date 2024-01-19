@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/rounded_category_button"
+        android:fontFamily="@font/montserrat_bold"
+        android:paddingHorizontal="15dp"
+        android:text="@string/dresses"
+        android:textAllCaps="false"
+        android:textSize="16sp" />
+
+</androidx.appcompat.widget.LinearLayoutCompat>
