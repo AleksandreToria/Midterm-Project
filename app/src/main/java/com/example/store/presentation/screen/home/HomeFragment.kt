@@ -47,6 +47,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         categoryAdapter.setOnItemClickListener {
             viewModel.onEvent(StoreEvent.FetchProductsByCategory(it))
         }
+
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            viewModel.onEvent(StoreEvent.FetchProducts)
+
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
     }
 
     override fun bindObserves() {
@@ -68,26 +74,26 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     }
 
     private fun handleProductState(state: ProductState) {
-        binding.progressBar.visibility =
-            if (state.isLoading) View.VISIBLE else View.GONE
+        binding.progressBar.visibility = if (state.isLoading) View.VISIBLE else View.GONE
 
-        state.categories?.let {
-            categoryAdapter.submitList(it)
+        if (viewModel.isFetchingByCategory()) {
+            state.categoryProducts?.let { productAdapter.submitList(it) }
+        } else {
+            state.products?.let { productAdapter.submitList(it) }
         }
 
-        state.products?.let {
-            productAdapter.submitList(it)
-        }
-
-        state.categoryProducts?.let {
-            productAdapter.submitList(it)
-        }
+        state.categories?.let { categoryAdapter.submitList(it) }
 
         state.errorMessage?.let {
             binding.root.showSnackBar(it)
             viewModel.onEvent(StoreEvent.ResetErrorMessage)
         }
+
+        if (!state.isLoading) {
+            binding.swipeRefreshLayout.isRefreshing = false
+        }
     }
+
 
     private fun handleNavigationEvents(event: HomeFragmentViewModel.HomeFragmentUiEvent) {
         when (event) {

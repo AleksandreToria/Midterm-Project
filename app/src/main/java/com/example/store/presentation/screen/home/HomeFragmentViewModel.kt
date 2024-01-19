@@ -31,6 +31,8 @@ class HomeFragmentViewModel @Inject constructor(
     private val _uiEvent = MutableSharedFlow<HomeFragmentUiEvent>()
     val uiEvent: SharedFlow<HomeFragmentUiEvent> get() = _uiEvent
 
+    private var isFetchingByCategory = false
+
     fun onEvent(event: StoreEvent) {
         when (event) {
             is StoreEvent.FetchProducts -> fetchProducts()
@@ -49,6 +51,7 @@ class HomeFragmentViewModel @Inject constructor(
     }
 
     private fun fetchProducts() {
+        isFetchingByCategory = false
         viewModelScope.launch {
             getProductUseCase().collect { it ->
                 when (it) {
@@ -95,6 +98,7 @@ class HomeFragmentViewModel @Inject constructor(
     }
 
     private fun fetchProductsByCategory(category: String) {
+        isFetchingByCategory = true
         viewModelScope.launch {
             getCategoryProductUseCase(category).collect { it ->
                 when (it) {
@@ -115,6 +119,8 @@ class HomeFragmentViewModel @Inject constructor(
             }
         }
     }
+
+    fun isFetchingByCategory() = isFetchingByCategory
 
     private fun updateErrorMessage(message: String?) {
         _productState.update { currentState -> currentState.copy(errorMessage = message) }
