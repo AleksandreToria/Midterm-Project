@@ -8,6 +8,7 @@ import com.example.store.domain.usecase.category_product.GetCategoryProductUseCa
 import com.example.store.domain.usecase.product.GetProductUseCase
 import com.example.store.presentation.event.product.StoreEvent
 import com.example.store.presentation.mapper.product.toPresenter
+import com.example.store.presentation.model.product.Product
 import com.example.store.presentation.state.product.ProductState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,6 +33,7 @@ class HomeFragmentViewModel @Inject constructor(
     val uiEvent: SharedFlow<HomeFragmentUiEvent> get() = _uiEvent
 
     private var isFetchingByCategory = false
+    private var fullProductList = listOf<Product>()
 
     fun onEvent(event: StoreEvent) {
         when (event) {
@@ -40,13 +42,8 @@ class HomeFragmentViewModel @Inject constructor(
             is StoreEvent.ItemClick -> onClick(HomeFragmentUiEvent.NavigateToProductInfo(event.id))
             is StoreEvent.FetchCategories -> fetchCategories()
             is StoreEvent.FetchProductsByCategory -> fetchProductsByCategory(event.category)
+            is StoreEvent.SearchProducts -> searchProducts(event.title)
             else -> {}
-        }
-    }
-
-    private fun onClick(homeFragmentUiEvent: HomeFragmentUiEvent) {
-        viewModelScope.launch {
-            _uiEvent.emit(homeFragmentUiEvent)
         }
     }
 
@@ -56,21 +53,18 @@ class HomeFragmentViewModel @Inject constructor(
             getProductUseCase().collect { it ->
                 when (it) {
                     is Resource.Success -> {
+                        fullProductList = it.data.map { it.toPresenter() }
                         _productState.update { currentState ->
                             currentState.copy(
                                 isLoading = false,
-                                products = it.data.map { it.toPresenter() }
+                                products = fullProductList
                             )
                         }
                     }
-
                     is Resource.Error -> updateErrorMessage(it.errorMessage)
-
                     is Resource.Loading -> {
                         _productState.update { currentState ->
-                            currentState.copy(
-                                isLoading = it.loading
-                            )
+                            currentState.copy(isLoading = it.loading)
                         }
                     }
                 }
@@ -117,6 +111,24 @@ class HomeFragmentViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    private fun searchProducts(title: String) {
+        val filteredProducts = if (title.isEmpty()) {
+            fullProductList
+        } else {
+            fullProductList.filter { it.title.contains(title, ignoreCase = true) }
+        }
+
+        _productState.update { currentState ->
+            currentState.copy(products = filteredProducts)
+        }
+    }
+
+    private fun onClick(homeFragmentUiEvent: HomeFragmentUiEvent) {
+        viewModelScope.launch {
+            _uiEvent.emit(homeFragmentUiEvent)
         }
     }
 

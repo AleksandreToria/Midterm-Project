@@ -7,6 +7,7 @@ data class ProductState(
     val products: List<Product>? = null,
     val categories: List<String>? = null,
     val categoryProducts: List<Product>? = null,
+    val searchedProducts: List<Product>? = null,
     val productInfo: Product? = null,
     val errorMessage: String? = null
 )

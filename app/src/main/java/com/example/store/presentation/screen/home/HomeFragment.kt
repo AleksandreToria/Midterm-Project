@@ -1,6 +1,7 @@
 package com.example.store.presentation.screen.home
 
 import android.view.View
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -52,6 +53,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             viewModel.onEvent(StoreEvent.FetchProducts)
 
             binding.swipeRefreshLayout.isRefreshing = false
+        }
+
+        binding.searchBar.doOnTextChanged { text, _, _, _ ->
+            viewModel.onEvent(StoreEvent.SearchProducts(text.toString()))
         }
     }
 
