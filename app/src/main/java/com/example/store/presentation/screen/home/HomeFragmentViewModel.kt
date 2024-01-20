@@ -34,6 +34,7 @@ class HomeFragmentViewModel @Inject constructor(
 
     private var isFetchingByCategory = false
     private var fullProductList = listOf<Product>()
+    private var fullCategoryProductList = listOf<Product>()
 
     fun onEvent(event: StoreEvent) {
         when (event) {
@@ -61,6 +62,7 @@ class HomeFragmentViewModel @Inject constructor(
                             )
                         }
                     }
+
                     is Resource.Error -> updateErrorMessage(it.errorMessage)
                     is Resource.Loading -> {
                         _productState.update { currentState ->
@@ -102,10 +104,11 @@ class HomeFragmentViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
+                        fullCategoryProductList = it.data.map { it.toPresenter() }
                         _productState.update { currentState ->
                             currentState.copy(
                                 isLoading = false,
-                                categoryProducts = it.data.map { it.toPresenter() }
+                                categoryProducts = fullCategoryProductList
                             )
                         }
                     }
@@ -116,15 +119,34 @@ class HomeFragmentViewModel @Inject constructor(
 
     private fun searchProducts(title: String) {
         val filteredProducts = if (title.isEmpty()) {
-            fullProductList
+            if (isFetchingByCategory) {
+                fullCategoryProductList
+            } else {
+                fullProductList
+            }
         } else {
-            fullProductList.filter { it.title.contains(title, ignoreCase = true) }
+            val productListToSearch = if (isFetchingByCategory) {
+                fullCategoryProductList
+            } else {
+                fullProductList
+            }
+            productListToSearch.filter { it.title.contains(title, ignoreCase = true) }
         }
 
         _productState.update { currentState ->
-            currentState.copy(products = filteredProducts)
+            if (isFetchingByCategory) {
+                currentState.copy(
+                    categoryProducts = filteredProducts,
+                    products = filteredProducts
+                )
+            } else {
+                currentState.copy(
+                    products = filteredProducts
+                )
+            }
         }
     }
+
 
     private fun onClick(homeFragmentUiEvent: HomeFragmentUiEvent) {
         viewModelScope.launch {

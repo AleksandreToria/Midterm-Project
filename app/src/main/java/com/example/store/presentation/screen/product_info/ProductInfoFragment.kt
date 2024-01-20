@@ -6,6 +6,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.example.store.databinding.FragmentProductInfoBinding
 import com.example.store.presentation.base.BaseFragment
 import com.example.store.presentation.event.product.StoreEvent
@@ -21,19 +22,8 @@ class ProductInfoFragment :
 
     private val viewModel: ProductInfoViewModel by viewModels()
 
-    override fun bind() {
-        arguments?.let {
-            val safeArgs = ProductInfoFragmentArgs.fromBundle(it)
-            viewModel.onEvent(StoreEvent.FetchStoreInfo(safeArgs.id))
-        }
-    }
-
-    override fun bindViewActionListeners() {
-
-    }
-
     @SuppressLint("SetTextI18n")
-    override fun bindObserves() {
+    override fun bind() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.productInfoState.collect {
@@ -51,6 +41,31 @@ class ProductInfoFragment :
                 }
             }
         }
+
+        listeners()
+    }
+
+    override fun bindViewActionListeners() {
+        arguments?.let {
+            val safeArgs = ProductInfoFragmentArgs.fromBundle(it)
+            viewModel.onEvent(StoreEvent.FetchStoreInfo(safeArgs.id))
+        }
+    }
+
+    override fun bindObserves() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiEvent.collect {
+                    handleNavigationEvents(it)
+                }
+            }
+        }
+    }
+
+    private fun listeners() {
+        binding.backBtn.setOnClickListener {
+            viewModel.onNavigateToHomeScreen()
+        }
     }
 
     private fun handleProductState(state: ProductState) {
@@ -64,6 +79,14 @@ class ProductInfoFragment :
         state.errorMessage?.let {
             binding.root.showSnackBar(it)
             viewModel.onEvent(StoreEvent.ResetErrorMessage)
+        }
+    }
+
+    private fun handleNavigationEvents(event: ProductInfoViewModel.ProductInfoUiEvent) {
+        when (event) {
+            ProductInfoViewModel.ProductInfoUiEvent.NavigateToHomeScreen -> {
+                findNavController().navigate(ProductInfoFragmentDirections.actionProductInfoFragmentToHomeFragment())
+            }
         }
     }
 }

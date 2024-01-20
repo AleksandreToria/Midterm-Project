@@ -8,7 +8,9 @@ import com.example.store.presentation.event.product.StoreEvent
 import com.example.store.presentation.mapper.product.toPresenter
 import com.example.store.presentation.state.product.ProductState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,6 +23,9 @@ class ProductInfoViewModel @Inject constructor(
 ) : ViewModel() {
     private val _productInfoState = MutableStateFlow(ProductState())
     val productInfoState: StateFlow<ProductState> = _productInfoState.asStateFlow()
+
+    private val _uiEvent = MutableSharedFlow<ProductInfoUiEvent>()
+    val uiEvent: SharedFlow<ProductInfoUiEvent> get() = _uiEvent
 
     fun onEvent(event: StoreEvent) {
         when (event) {
@@ -59,5 +64,15 @@ class ProductInfoViewModel @Inject constructor(
 
     private fun updateErrorMessage(message: String?) {
         _productInfoState.update { currentState -> currentState.copy(errorMessage = message) }
+    }
+
+    fun onNavigateToHomeScreen() {
+        viewModelScope.launch {
+            _uiEvent.emit(ProductInfoUiEvent.NavigateToHomeScreen)
+        }
+    }
+
+    sealed interface ProductInfoUiEvent {
+        data object NavigateToHomeScreen : ProductInfoUiEvent
     }
 }
