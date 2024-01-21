@@ -5,6 +5,7 @@ plugins {
     id("androidx.navigation.safeargs.kotlin") version "2.7.5" apply false
     id("com.google.dagger.hilt.android") version "2.50" apply false
     kotlin("plugin.serialization") version "1.9.21"
+    id("com.google.devtools.ksp") version "1.9.21-1.0.15" apply false
 }
 buildscript {
     repositories {

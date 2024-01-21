@@ -1,7 +1,7 @@
 package com.example.store.presentation.mapper.product
 
-import com.example.store.domain.model.store.GetProducts
-import com.example.store.domain.model.store.Rating
+import com.example.store.domain.remote.model.store.GetProducts
+import com.example.store.domain.remote.model.store.Rating
 import com.example.store.presentation.model.product.Product
 import com.example.store.presentation.model.product.Rate
 

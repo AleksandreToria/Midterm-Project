@@ -22,4 +22,9 @@
     <string name="welcome_to_store">Welcome to Store</string>
     <string name="categories">Categories</string>
     <string name="dresses">Dresses</string>
+    <string name="home">Home</string>
+    <string name="cart">Cart</string>
+    <string name="shopping_cart">Shopping Cart</string>
+    <string name="total_price">Total Price</string>
+    <string name="buy">Buy</string>
 </resources>

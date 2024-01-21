@@ -8,8 +8,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.store.databinding.FragmentProductInfoBinding
+import com.example.store.domain.local.model.CartEntity
 import com.example.store.presentation.base.BaseFragment
-import com.example.store.presentation.event.product.StoreEvent
+import com.example.store.presentation.event.product_info.ProductInfoEvent
 import com.example.store.presentation.extension.loadImage
 import com.example.store.presentation.extension.showSnackBar
 import com.example.store.presentation.state.product.ProductState
@@ -21,6 +22,7 @@ class ProductInfoFragment :
     BaseFragment<FragmentProductInfoBinding>(FragmentProductInfoBinding::inflate) {
 
     private val viewModel: ProductInfoViewModel by viewModels()
+    private var isItemSavedInCart = false
 
     @SuppressLint("SetTextI18n")
     override fun bind() {
@@ -48,7 +50,7 @@ class ProductInfoFragment :
     override fun bindViewActionListeners() {
         arguments?.let {
             val safeArgs = ProductInfoFragmentArgs.fromBundle(it)
-            viewModel.onEvent(StoreEvent.FetchStoreInfo(safeArgs.id))
+            viewModel.onEvent(ProductInfoEvent.FetchProductInfo(safeArgs.id))
         }
     }
 
@@ -63,8 +65,27 @@ class ProductInfoFragment :
     }
 
     private fun listeners() {
-        binding.backBtn.setOnClickListener {
-            viewModel.onNavigateToHomeScreen()
+        binding.apply {
+            backBtn.setOnClickListener {
+                viewModel.onNavigateToHomeScreen()
+            }
+
+            addToCartBtn.setOnClickListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        handleAddToCart(getItem())
+                    }
+                }
+            }
+
+            buyNowBtn.setOnClickListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.STARTED) {
+                        handleBuyItem(getItem())
+                        isItemSavedInCart = isItemSavedInCart.not()
+                    }
+                }
+            }
         }
     }
 
@@ -72,20 +93,62 @@ class ProductInfoFragment :
         binding.progressBar.visibility =
             if (state.isLoading) View.VISIBLE else View.GONE
 
-        state.productInfo?.let {
-
-        }
-
         state.errorMessage?.let {
             binding.root.showSnackBar(it)
-            viewModel.onEvent(StoreEvent.ResetErrorMessage)
+            viewModel.onEvent(ProductInfoEvent.ResetErrorMessage)
         }
+    }
+
+    private fun handleBuyItem(item: CartEntity) {
+        when (isItemSavedInCart) {
+            true -> {
+                viewModel.onNavigateToCart()
+            }
+
+            false -> {
+                viewModel.onEvent(ProductInfoEvent.AddItem(item))
+                viewModel.onNavigateToCart()
+            }
+        }
+    }
+
+
+    private fun handleAddToCart(item: CartEntity) {
+        when (isItemSavedInCart) {
+            true -> {
+                binding.root.showSnackBar("The item is already added to the cart")
+            }
+
+            false -> {
+                viewModel.onEvent(ProductInfoEvent.AddItem(item))
+                viewModel.onNavigateToHomeScreen()
+            }
+        }
+    }
+
+    private fun getItem(): CartEntity {
+        val productId =
+            viewModel.getCurrentProductId() ?: throw IllegalStateException("Product ID is null")
+        val priceString = binding.price.text.toString()
+        val numericPriceString = priceString.replace("[^\\d.]".toRegex(), "")
+        val price = numericPriceString.toDoubleOrNull() ?: 0.0
+
+        return CartEntity(
+            id = productId,
+            title = binding.title.text.toString(),
+            image = viewModel.getCurrentImage()!!,
+            price = price
+        )
     }
 
     private fun handleNavigationEvents(event: ProductInfoViewModel.ProductInfoUiEvent) {
         when (event) {
             ProductInfoViewModel.ProductInfoUiEvent.NavigateToHomeScreen -> {
                 findNavController().navigate(ProductInfoFragmentDirections.actionProductInfoFragmentToHomeFragment())
+            }
+
+            ProductInfoViewModel.ProductInfoUiEvent.NavigateToCart -> {
+                findNavController().navigate(ProductInfoFragmentDirections.actionProductInfoFragmentToCartFragment())
             }
         }
     }

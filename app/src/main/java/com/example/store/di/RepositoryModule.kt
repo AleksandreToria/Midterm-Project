@@ -1,11 +1,11 @@
 package com.example.store.di
 
-import com.example.store.data.repository.auth.AuthRepositoryImpl
-import com.example.store.data.repository.category.CategoryRepositoryImpl
-import com.example.store.data.repository.store.ProductRepositoryImpl
-import com.example.store.domain.repository.auth.AuthRepository
-import com.example.store.domain.repository.category.CategoryRepository
-import com.example.store.domain.repository.store.ProductRepository
+import com.example.store.data.remote.repository.auth.AuthRepositoryImpl
+import com.example.store.data.remote.repository.category.CategoryRepositoryImpl
+import com.example.store.data.remote.repository.store.ProductRepositoryImpl
+import com.example.store.domain.remote.repository.auth.AuthRepository
+import com.example.store.domain.remote.repository.category.CategoryRepository
+import com.example.store.domain.remote.repository.store.ProductRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

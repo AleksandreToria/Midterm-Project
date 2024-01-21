@@ -3,8 +3,10 @@ package com.example.store.presentation.screen.product_info
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.store.data.common.Resource
-import com.example.store.domain.usecase.product.GetProductInfoUseCase
-import com.example.store.presentation.event.product.StoreEvent
+import com.example.store.domain.local.model.CartEntity
+import com.example.store.domain.local.usecase.CartUseCase
+import com.example.store.domain.remote.usecase.product.GetProductInfoUseCase
+import com.example.store.presentation.event.product_info.ProductInfoEvent
 import com.example.store.presentation.mapper.product.toPresenter
 import com.example.store.presentation.state.product.ProductState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProductInfoViewModel @Inject constructor(
-    private val getProductInfoUseCase: GetProductInfoUseCase
+    private val getProductInfoUseCase: GetProductInfoUseCase,
+    private val cartUseCase: CartUseCase
 ) : ViewModel() {
     private val _productInfoState = MutableStateFlow(ProductState())
     val productInfoState: StateFlow<ProductState> = _productInfoState.asStateFlow()
@@ -27,11 +30,11 @@ class ProductInfoViewModel @Inject constructor(
     private val _uiEvent = MutableSharedFlow<ProductInfoUiEvent>()
     val uiEvent: SharedFlow<ProductInfoUiEvent> get() = _uiEvent
 
-    fun onEvent(event: StoreEvent) {
+    fun onEvent(event: ProductInfoEvent) {
         when (event) {
-            is StoreEvent.FetchStoreInfo -> fetchProducts(event.id)
-            is StoreEvent.ResetErrorMessage -> updateErrorMessage(null)
-            else -> {}
+            is ProductInfoEvent.FetchProductInfo -> fetchProducts(event.id)
+            is ProductInfoEvent.ResetErrorMessage -> updateErrorMessage(null)
+            is ProductInfoEvent.AddItem -> addItem(event.cartEntity)
         }
     }
 
@@ -72,7 +75,28 @@ class ProductInfoViewModel @Inject constructor(
         }
     }
 
+    fun onNavigateToCart() {
+        viewModelScope.launch {
+            _uiEvent.emit(ProductInfoUiEvent.NavigateToCart)
+        }
+    }
+
+    private fun addItem(item: CartEntity) {
+        viewModelScope.launch {
+            cartUseCase.addItem(item)
+        }
+    }
+
+    fun getCurrentProductId(): Int? {
+        return _productInfoState.value.productInfo?.id
+    }
+
+    fun getCurrentImage(): String? {
+        return _productInfoState.value.productInfo?.image
+    }
+
     sealed interface ProductInfoUiEvent {
         data object NavigateToHomeScreen : ProductInfoUiEvent
+        data object NavigateToCart : ProductInfoUiEvent
     }
 }

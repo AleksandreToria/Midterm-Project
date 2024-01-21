@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.store.databinding.FragmentHomeBinding
 import com.example.store.presentation.base.BaseFragment
-import com.example.store.presentation.event.product.StoreEvent
+import com.example.store.presentation.event.home.HomeEvent
 import com.example.store.presentation.extension.showSnackBar
 import com.example.store.presentation.state.product.ProductState
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,27 +36,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             categoryRecyclerView.adapter = categoryAdapter
         }
 
-        viewModel.onEvent(StoreEvent.FetchProducts)
-        viewModel.onEvent(StoreEvent.FetchCategories)
+        viewModel.onEvent(HomeEvent.FetchProducts)
+        viewModel.onEvent(HomeEvent.FetchCategories)
     }
 
     override fun bindViewActionListeners() {
         productAdapter.setOnItemClickListener {
-            viewModel.onEvent(StoreEvent.ItemClick(it.id))
+            viewModel.onEvent(HomeEvent.ItemClick(it.id))
         }
 
         categoryAdapter.setOnItemClickListener {
-            viewModel.onEvent(StoreEvent.FetchProductsByCategory(it))
+            viewModel.onEvent(HomeEvent.FetchProductsByCategory(it))
         }
 
         binding.swipeRefreshLayout.setOnRefreshListener {
-            viewModel.onEvent(StoreEvent.FetchProducts)
+            viewModel.onEvent(HomeEvent.FetchProducts)
 
             binding.swipeRefreshLayout.isRefreshing = false
         }
 
         binding.searchBar.doOnTextChanged { text, _, _, _ ->
-            viewModel.onEvent(StoreEvent.SearchProducts(text.toString()))
+            viewModel.onEvent(HomeEvent.SearchProducts(text.toString()))
         }
     }
 
@@ -91,14 +91,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
         state.errorMessage?.let {
             binding.root.showSnackBar(it)
-            viewModel.onEvent(StoreEvent.ResetErrorMessage)
+            viewModel.onEvent(HomeEvent.ResetErrorMessage)
         }
 
         if (!state.isLoading) {
             binding.swipeRefreshLayout.isRefreshing = false
         }
     }
-
 
     private fun handleNavigationEvents(event: HomeFragmentViewModel.HomeFragmentUiEvent) {
         when (event) {
@@ -107,6 +106,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
                     HomeFragmentDirections.actionHomeFragmentToProductInfoFragment(
                         id = event.id
                     )
+                )
+            }
+
+            is HomeFragmentViewModel.HomeFragmentUiEvent.NavigateToCart -> {
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToCartFragment()
                 )
             }
         }

@@ -1,7 +1,7 @@
 package com.example.store.di
 
-import com.example.store.data.service.CategoryService
-import com.example.store.data.service.ProductService
+import com.example.store.data.remote.service.CategoryService
+import com.example.store.data.remote.service.ProductService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module

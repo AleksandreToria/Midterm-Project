@@ -3,10 +3,9 @@ package com.example.store.presentation.screen.log_in
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.store.data.common.Resource
-import com.example.store.domain.usecase.log_in.GoogleSignInUseCase
-import com.example.store.domain.usecase.log_in.LogInUseCase
-import com.example.store.domain.usecase.validation.EmailValidatorUseCase
-import com.example.store.domain.usecase.validation.PasswordValidatorUseCase
+import com.example.store.domain.remote.usecase.log_in.LogInUseCase
+import com.example.store.domain.remote.usecase.validation.EmailValidatorUseCase
+import com.example.store.domain.remote.usecase.validation.PasswordValidatorUseCase
 import com.example.store.presentation.event.auth.AuthEvent
 import com.example.store.presentation.state.auth.AuthViewState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,7 +23,6 @@ class LogInViewModel @Inject constructor(
     private val logInUseCase: LogInUseCase,
     private val emailValidator: EmailValidatorUseCase,
     private val passwordValidator: PasswordValidatorUseCase,
-    private val googleSignInUseCase: GoogleSignInUseCase
 ) : ViewModel() {
 
     private val _logInState = MutableStateFlow(AuthViewState())
@@ -44,34 +42,6 @@ class LogInViewModel @Inject constructor(
     private fun login(email: String, password: String) {
         viewModelScope.launch {
             logInUseCase(email, password).collect { resource ->
-                when (resource) {
-                    is Resource.Success -> {
-                        _logInState.update { currentState ->
-                            currentState.copy(
-                                isLoading = false,
-                                firebaseUser = resource.data,
-                                errorMessage = null
-                            )
-                        }
-                        _uiEvent.emit(LogInUiEvent.NavigateToHome)
-                    }
-
-                    is Resource.Error -> updateErrorMessage(resource.errorMessage)
-
-                    is Resource.Loading -> {
-                        _logInState.update { currentState ->
-                            currentState.copy(isLoading = resource.loading)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    //    Sign in with google needs implementation
-    fun googleLogIn(idToken: String) {
-        viewModelScope.launch {
-            googleSignInUseCase(idToken).collect { resource ->
                 when (resource) {
                     is Resource.Success -> {
                         _logInState.update { currentState ->

@@ -3,10 +3,10 @@ package com.example.store.presentation.screen.register
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.store.data.common.Resource
-import com.example.store.domain.usecase.registration.RegisterUseCase
-import com.example.store.domain.usecase.validation.ConfirmPasswordValidatorUseCase
-import com.example.store.domain.usecase.validation.EmailValidatorUseCase
-import com.example.store.domain.usecase.validation.PasswordValidatorUseCase
+import com.example.store.domain.remote.usecase.registration.RegisterUseCase
+import com.example.store.domain.remote.usecase.validation.ConfirmPasswordValidatorUseCase
+import com.example.store.domain.remote.usecase.validation.EmailValidatorUseCase
+import com.example.store.domain.remote.usecase.validation.PasswordValidatorUseCase
 import com.example.store.presentation.event.auth.AuthEvent
 import com.example.store.presentation.state.auth.AuthViewState
 import dagger.hilt.android.lifecycle.HiltViewModel

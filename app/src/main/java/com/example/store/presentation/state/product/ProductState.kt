@@ -9,5 +9,5 @@ data class ProductState(
     val categoryProducts: List<Product>? = null,
     val searchedProducts: List<Product>? = null,
     val productInfo: Product? = null,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
 )

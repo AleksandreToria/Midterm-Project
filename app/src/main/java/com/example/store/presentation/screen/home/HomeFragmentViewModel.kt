@@ -3,10 +3,10 @@ package com.example.store.presentation.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.store.data.common.Resource
-import com.example.store.domain.usecase.category.GetCategoryUseCase
-import com.example.store.domain.usecase.category_product.GetCategoryProductUseCase
-import com.example.store.domain.usecase.product.GetProductUseCase
-import com.example.store.presentation.event.product.StoreEvent
+import com.example.store.domain.remote.usecase.category.GetCategoryUseCase
+import com.example.store.domain.remote.usecase.category_product.GetCategoryProductUseCase
+import com.example.store.domain.remote.usecase.product.GetProductUseCase
+import com.example.store.presentation.event.home.HomeEvent
 import com.example.store.presentation.mapper.product.toPresenter
 import com.example.store.presentation.model.product.Product
 import com.example.store.presentation.state.product.ProductState
@@ -36,15 +36,14 @@ class HomeFragmentViewModel @Inject constructor(
     private var fullProductList = listOf<Product>()
     private var fullCategoryProductList = listOf<Product>()
 
-    fun onEvent(event: StoreEvent) {
+    fun onEvent(event: HomeEvent) {
         when (event) {
-            is StoreEvent.FetchProducts -> fetchProducts()
-            is StoreEvent.ResetErrorMessage -> updateErrorMessage(null)
-            is StoreEvent.ItemClick -> onClick(HomeFragmentUiEvent.NavigateToProductInfo(event.id))
-            is StoreEvent.FetchCategories -> fetchCategories()
-            is StoreEvent.FetchProductsByCategory -> fetchProductsByCategory(event.category)
-            is StoreEvent.SearchProducts -> searchProducts(event.title)
-            else -> {}
+            is HomeEvent.FetchProducts -> fetchProducts()
+            is HomeEvent.ResetErrorMessage -> updateErrorMessage(null)
+            is HomeEvent.ItemClick -> onClick(HomeFragmentUiEvent.NavigateToProductInfo(event.id))
+            is HomeEvent.FetchCategories -> fetchCategories()
+            is HomeEvent.FetchProductsByCategory -> fetchProductsByCategory(event.category)
+            is HomeEvent.SearchProducts -> searchProducts(event.title)
         }
     }
 
@@ -147,7 +146,6 @@ class HomeFragmentViewModel @Inject constructor(
         }
     }
 
-
     private fun onClick(homeFragmentUiEvent: HomeFragmentUiEvent) {
         viewModelScope.launch {
             _uiEvent.emit(homeFragmentUiEvent)
@@ -162,5 +160,6 @@ class HomeFragmentViewModel @Inject constructor(
 
     sealed interface HomeFragmentUiEvent {
         data class NavigateToProductInfo(val id: Int) : HomeFragmentUiEvent
+        data object NavigateToCart : HomeFragmentUiEvent
     }
 }
