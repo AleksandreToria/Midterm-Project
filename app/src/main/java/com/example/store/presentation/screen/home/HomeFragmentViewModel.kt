@@ -3,12 +3,14 @@ package com.example.store.presentation.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.store.data.common.Resource
+import com.example.store.domain.local.usecase.CartUseCase
 import com.example.store.domain.remote.usecase.category.GetCategoryUseCase
 import com.example.store.domain.remote.usecase.category_product.GetCategoryProductUseCase
 import com.example.store.domain.remote.usecase.product.GetProductUseCase
 import com.example.store.presentation.event.home.HomeEvent
 import com.example.store.presentation.mapper.product.toPresenter
 import com.example.store.presentation.model.product.Product
+import com.example.store.presentation.screen.cart.CartFragmentViewModel
 import com.example.store.presentation.state.product.ProductState
 import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +27,8 @@ import javax.inject.Inject
 class HomeFragmentViewModel @Inject constructor(
     private val getProductUseCase: GetProductUseCase,
     private val getCategoryUseCase: GetCategoryUseCase,
-    private val getCategoryProductUseCase: GetCategoryProductUseCase
+    private val getCategoryProductUseCase: GetCategoryProductUseCase,
+    private val cartUseCase: CartUseCase
 ) : ViewModel() {
     private val _productState = MutableStateFlow(ProductState())
     val productState: StateFlow<ProductState> = _productState.asStateFlow()
@@ -46,7 +49,7 @@ class HomeFragmentViewModel @Inject constructor(
             is HomeEvent.FetchCategories -> fetchCategories()
             is HomeEvent.FetchProductsByCategory -> fetchProductsByCategory(event.category)
             is HomeEvent.SearchProducts -> searchProducts(event.title)
-            is HomeEvent.SignOut -> signOut(HomeFragmentUiEvent.NavigateToLogin)
+            is HomeEvent.SignOut -> clearCart()
         }
     }
 
@@ -149,18 +152,29 @@ class HomeFragmentViewModel @Inject constructor(
         }
     }
 
+    private fun clearCart() {
+        viewModelScope.launch {
+            try {
+                cartUseCase.removeAllItemsUseCase()
+                _uiEvent.emit(HomeFragmentUiEvent.NavigateToLogin)
+            } catch (e: Exception) {
+                updateErrorMessage(e.message)
+            }
+        }
+    }
+
     private fun onClick(homeFragmentUiEvent: HomeFragmentUiEvent) {
         viewModelScope.launch {
             _uiEvent.emit(homeFragmentUiEvent)
         }
     }
 
-    private fun signOut(homeFragmentUiEvent: HomeFragmentUiEvent) {
-        auth.signOut()
-        viewModelScope.launch {
-            _uiEvent.emit(homeFragmentUiEvent)
-        }
-    }
+//    private fun signOut(homeFragmentUiEvent: HomeFragmentUiEvent) {
+//        auth.signOut()
+//        viewModelScope.launch {
+//            _uiEvent.emit(homeFragmentUiEvent)
+//        }
+//    }
 
     fun isFetchingByCategory() = isFetchingByCategory
 
