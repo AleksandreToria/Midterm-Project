@@ -169,13 +169,6 @@ class HomeFragmentViewModel @Inject constructor(
         }
     }
 
-//    private fun signOut(homeFragmentUiEvent: HomeFragmentUiEvent) {
-//        auth.signOut()
-//        viewModelScope.launch {
-//            _uiEvent.emit(homeFragmentUiEvent)
-//        }
-//    }
-
     fun isFetchingByCategory() = isFetchingByCategory
 
     private fun updateErrorMessage(message: String?) {
