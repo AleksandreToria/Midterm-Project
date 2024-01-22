@@ -10,6 +10,7 @@ import com.example.store.presentation.event.home.HomeEvent
 import com.example.store.presentation.mapper.product.toPresenter
 import com.example.store.presentation.model.product.Product
 import com.example.store.presentation.state.product.ProductState
+import com.google.firebase.auth.FirebaseAuth
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +36,7 @@ class HomeFragmentViewModel @Inject constructor(
     private var isFetchingByCategory = false
     private var fullProductList = listOf<Product>()
     private var fullCategoryProductList = listOf<Product>()
+    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     fun onEvent(event: HomeEvent) {
         when (event) {
@@ -44,6 +46,7 @@ class HomeFragmentViewModel @Inject constructor(
             is HomeEvent.FetchCategories -> fetchCategories()
             is HomeEvent.FetchProductsByCategory -> fetchProductsByCategory(event.category)
             is HomeEvent.SearchProducts -> searchProducts(event.title)
+            is HomeEvent.SignOut -> signOut(HomeFragmentUiEvent.NavigateToLogin)
         }
     }
 
@@ -152,6 +155,13 @@ class HomeFragmentViewModel @Inject constructor(
         }
     }
 
+    private fun signOut(homeFragmentUiEvent: HomeFragmentUiEvent) {
+        auth.signOut()
+        viewModelScope.launch {
+            _uiEvent.emit(homeFragmentUiEvent)
+        }
+    }
+
     fun isFetchingByCategory() = isFetchingByCategory
 
     private fun updateErrorMessage(message: String?) {
@@ -161,5 +171,6 @@ class HomeFragmentViewModel @Inject constructor(
     sealed interface HomeFragmentUiEvent {
         data class NavigateToProductInfo(val id: Int) : HomeFragmentUiEvent
         data object NavigateToCart : HomeFragmentUiEvent
+        data object NavigateToLogin: HomeFragmentUiEvent
     }
 }

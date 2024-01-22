@@ -100,30 +100,14 @@ class ProductInfoFragment :
     }
 
     private fun handleBuyItem(item: CartEntity) {
-        when (isItemSavedInCart) {
-            true -> {
-                viewModel.onNavigateToCart()
-            }
-
-            false -> {
-                viewModel.onEvent(ProductInfoEvent.AddItem(item))
-                viewModel.onNavigateToCart()
-            }
-        }
+        viewModel.onEvent(ProductInfoEvent.AddItem(item))
+        viewModel.onNavigateToCart()
     }
 
 
     private fun handleAddToCart(item: CartEntity) {
-        when (isItemSavedInCart) {
-            true -> {
-                binding.root.showSnackBar("The item is already added to the cart")
-            }
-
-            false -> {
-                viewModel.onEvent(ProductInfoEvent.AddItem(item))
-                viewModel.onNavigateToHomeScreen()
-            }
-        }
+        viewModel.onEvent(ProductInfoEvent.AddItem(item))
+        viewModel.onNavigateToHomeScreen()
     }
 
     private fun getItem(): CartEntity {

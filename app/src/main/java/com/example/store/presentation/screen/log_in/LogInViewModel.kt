@@ -85,6 +85,12 @@ class LogInViewModel @Inject constructor(
         _logInState.update { currentState -> currentState.copy(errorMessage = message) }
     }
 
+    fun navigateToForgotPasswordPage() {
+        viewModelScope.launch {
+            _uiEvent.emit(LogInUiEvent.NavigateToForgotPasswordPage)
+        }
+    }
+
     fun navigateToRegister() {
         viewModelScope.launch {
             _uiEvent.emit(LogInUiEvent.NavigateToRegister)
@@ -94,5 +100,6 @@ class LogInViewModel @Inject constructor(
     sealed interface LogInUiEvent {
         data object NavigateToRegister : LogInUiEvent
         data object NavigateToHome : LogInUiEvent
+        data object NavigateToForgotPasswordPage: LogInUiEvent
     }
 }

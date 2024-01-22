@@ -1,8 +1,8 @@
 package com.example.store.presentation.screen.cart
 
-import android.util.Log.d
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.store.domain.local.model.CartEntity
 import com.example.store.domain.local.usecase.CartUseCase
 import com.example.store.presentation.event.cart.CartEvent
 import com.example.store.presentation.state.cart.CartState
@@ -26,10 +26,15 @@ class CartFragmentViewModel @Inject constructor(
     private val _uiEvent = MutableSharedFlow<CartUiEvent>()
     val uiEvent: SharedFlow<CartUiEvent> get() = _uiEvent
 
+    private val _totalPrice = MutableStateFlow(0.0)
+    val totalPrice: StateFlow<Double> = _totalPrice.asStateFlow()
+
     fun onEvent(event: CartEvent) {
         when (event) {
             CartEvent.GetItems -> getItems()
             CartEvent.RemoveAllItems -> clearCart()
+            CartEvent.NavigateHome -> navigateHome()
+            else -> {}
         }
     }
 
@@ -42,7 +47,6 @@ class CartFragmentViewModel @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
-                d("ylaa", "${e.message}")
                 updateErrorMessage(e.message)
             }
         }
@@ -54,9 +58,30 @@ class CartFragmentViewModel @Inject constructor(
                 cartUseCase.removeAllItemsUseCase()
                 _uiEvent.emit(CartUiEvent.NavigateToHomeFragment)
             } catch (e: Exception) {
-                d("ylaa", "${e.message}")
                 updateErrorMessage(e.message)
             }
+        }
+    }
+
+    fun deleteItem(cartEntity: CartEntity) {
+        viewModelScope.launch {
+            try {
+                cartUseCase.removeItem(cartEntity)
+                getItems()
+            } catch (e: Exception) {
+                updateErrorMessage(e.message)
+            }
+        }
+    }
+
+
+    fun setTotalPrice(totalPrice: Double) {
+        _totalPrice.value = totalPrice
+    }
+
+    private fun navigateHome() {
+        viewModelScope.launch {
+            _uiEvent.emit(CartUiEvent.NavigateToHomeFragment)
         }
     }
 

@@ -59,6 +59,10 @@ class LogInFragment : BaseFragment<FragmentLogInBinding>(FragmentLogInBinding::i
             createNewAcc.setOnClickListener {
                 viewModel.navigateToRegister()
             }
+
+            forgotPass.setOnClickListener {
+                viewModel.navigateToForgotPasswordPage()
+            }
         }
     }
 
@@ -82,6 +86,10 @@ class LogInFragment : BaseFragment<FragmentLogInBinding>(FragmentLogInBinding::i
 
             is LogInViewModel.LogInUiEvent.NavigateToRegister -> {
                 findNavController().navigate(LogInFragmentDirections.actionLogInFragmentToRegisterFragment())
+            }
+
+            LogInViewModel.LogInUiEvent.NavigateToForgotPasswordPage -> {
+                findNavController().navigate(LogInFragmentDirections.actionLogInFragmentToForgotPassword())
             }
         }
     }

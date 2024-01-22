@@ -7,4 +7,5 @@ sealed class HomeEvent {
     data object ResetErrorMessage : HomeEvent()
     data class ItemClick(val id: Int) : HomeEvent()
     data class SearchProducts(val title: String) : HomeEvent()
+    data object SignOut: HomeEvent()
 }

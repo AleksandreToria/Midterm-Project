@@ -1,6 +1,6 @@
 package com.example.store.presentation.screen.home
 
-import android.view.View
+import  android.view.View
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -25,17 +25,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
     private val categoryAdapter = CategoryRecyclerAdapter()
 
     override fun bind() {
-        binding.apply {
-            recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-            recyclerView.adapter = productAdapter
-        }
-
-        binding.apply {
-            categoryRecyclerView.layoutManager =
-                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            categoryRecyclerView.adapter = categoryAdapter
-        }
-
+        setupRecyclerViews()
         viewModel.onEvent(HomeEvent.FetchProducts)
         viewModel.onEvent(HomeEvent.FetchCategories)
     }
@@ -57,6 +47,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
 
         binding.searchBar.doOnTextChanged { text, _, _, _ ->
             viewModel.onEvent(HomeEvent.SearchProducts(text.toString()))
+        }
+
+        binding.signOut.setOnClickListener {
+            viewModel.onEvent(HomeEvent.SignOut)
         }
     }
 
@@ -99,6 +93,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
         }
     }
 
+    private fun setupRecyclerViews() {
+        binding.recyclerView.apply {
+            layoutManager = GridLayoutManager(requireContext(), 2)
+            adapter = productAdapter
+        }
+
+        binding.categoryRecyclerView.apply {
+            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            adapter = categoryAdapter
+        }
+    }
+
     private fun handleNavigationEvents(event: HomeFragmentViewModel.HomeFragmentUiEvent) {
         when (event) {
             is HomeFragmentViewModel.HomeFragmentUiEvent.NavigateToProductInfo -> {
@@ -112,6 +118,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::infl
             is HomeFragmentViewModel.HomeFragmentUiEvent.NavigateToCart -> {
                 findNavController().navigate(
                     HomeFragmentDirections.actionHomeFragmentToCartFragment()
+                )
+            }
+
+            HomeFragmentViewModel.HomeFragmentUiEvent.NavigateToLogin -> {
+                findNavController().navigate(
+                    HomeFragmentDirections.actionHomeFragmentToLogInFragment()
                 )
             }
         }
