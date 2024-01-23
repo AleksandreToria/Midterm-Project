@@ -1,42 +1,54 @@
-Store App README
+# Table of Contents
+- [About the App](#about-the-app)
+- [Tech Stack](#tech-stack)
+- [API](#api)
+- [Screenshots](#screenshots)
+- [Our Goal]("our-goal")
 
+## About the App
 
-About the App
+Store App is a user-friendly shopping application designed to make your online shopping experience 
+smooth and enjoyable. It's packed with features that allow you to browse, select, and purchase your 
+favorite items effortlessly.
 
+## Tech Stack
+- FireBase Auth
+- RetroFit
+- Room
+- Coroutines
+- View Binding
+- Clean Architecture
+- Bottom Navigation View
+- View Binding
+- Splash Screen
+- Custom Icon
 
-Store App is a user-friendly shopping application designed to make your online shopping experience smooth and enjoyable. 
-It's packed with features that allow you to browse, select, and purchase your favorite items effortlessly.
+## API
+- FakeStore API - https://fakestoreapi.com/products/
 
+## Screenshots
 
-Key Features
+### Register Screen:<br/><br/>
+<img src="https://github.com/AleksandreToria/Midterm-Project/assets/106707510/2c30aad7-5e63-4649-9101-94dbc8f33586"><br/><br/>
 
+### Login Screen:<br/><br/>
+<img src="https://github.com/AleksandreToria/Midterm-Project/assets/106707510/58eb221e-0ba1-498d-b367-db44d93b6373"><br/><br/>
 
-User Authentication: Easy registration, login, and a handy 'Forgot Password' feature.
+### Forgot Password Screen:<br/><br/>
+<img src="https://github.com/AleksandreToria/Midterm-Project/assets/106707510/b8bb8273-96b4-4efb-bc34-525b7ba76060"><br/><br/>
 
-Stay Logged In: Remain logged in for quick access, even after closing the app.
+### Home Screen<br/><br/>
+All the products, categories and the main functionality is present on the Home Screen.<br/><br/>
+<img src="https://github.com/AleksandreToria/Midterm-Project/assets/106707510/17c9d7ee-b2ea-4626-a2cb-c4d4377774ec"><br/><br/>
 
-Explore Products: Browse store items on the homepage.
+### Product Info<br/><br/>
+Detailed product information is available on this screen. User can also buy or add the product to the cart.<br/><br/>
+<img src="https://github.com/AleksandreToria/Midterm-Project/assets/106707510/e91ea958-a61d-4afe-a834-c20fe3509005"><br/><br/>
 
-Search and Categories: Find what you're looking for with a search bar and category filters.
+### Cart<br/><br/>
+On this screen, the cart is displayed with all the items. The user can also choose the quantity, delete item and buy all the items at once.<br/><br/>
+<img src="https://github.com/AleksandreToria/Midterm-Project/assets/106707510/c529c474-5e24-45f4-b4a7-061bb2a0a5c8"><br/><br/>
 
-Product Details: Get detailed information about each item with options to buy or add to cart.
-
-Manage Your Cart: Add multiple items, adjust quantities, and remove items as needed.
-
-Checkout: Complete your purchases with a simple and secure checkout process.
-
-
-Tech Stack
-
-
-Firebase Auth, Retrofit, Room: For secure authentication, network operations, and local data storage.
-
-Coroutines, View Binding: For efficient asynchronous tasks and safe view interactions.
-
-Clean Architecture: Ensures the app is scalable and maintainable.
-Navigation Components and Bottom Navigation View: For seamless in-app navigation.
-Splash Screen and Custom Launcher Icon: For an engaging user interface.
-
-Our Goal
+## Our Goal
 
 We created Store App to streamline your online shopping. It blends modern technology with a user-centric design, ensuring a hassle-free shopping experience from browsing to checkout.
