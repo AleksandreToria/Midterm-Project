@@ -3,7 +3,7 @@
 - [Tech Stack](#tech-stack)
 - [API](#api)
 - [Screenshots](#screenshots)
-- [Our Goal]("our-goal")
+- [Our Goal](#our-goal)
 
 ## About the App
 
